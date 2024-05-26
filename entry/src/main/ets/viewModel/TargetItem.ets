@@ -1,5 +1,6 @@
 import { getFormattedDateByTimestamp } from './common';
 
+@Observed
 export class TargetItem {
   private text: string;
   private updateTime: number;

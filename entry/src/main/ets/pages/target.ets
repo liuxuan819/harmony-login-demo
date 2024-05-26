@@ -1,5 +1,6 @@
 import Dialog from '../view/Dialog'
 import Rate from '../view/Rate'
+import TargetItemComponent from '../view/TargetItem'
 import { getFormattedDateByTimestamp } from '../viewModel/common'
 import { TargetItem } from '../viewModel/TargetItem'
 
@@ -13,6 +14,15 @@ struct Target {
   ]
   @State updateTime: number = Date.now();
   @State isEditMode: boolean = false;
+  @State focusIndex: number = -1;
+  @State @Watch('handleTargetChange') targetChange: boolean = false;
+  @State numerator: number = 0;
+  @State denominator: number = 0;
+
+  onPageShow(): void {
+    this.updateRate();
+  }
+
   dialogController: CustomDialogController = new CustomDialogController({
     builder: Dialog({
       confirm: (value: string): void => this.saveTarget(value)
@@ -30,11 +40,9 @@ struct Target {
     this.updateTime = timestamp;
   }
 
-  getRate(): { numerator: number, denominator: number } {
-    return {
-      numerator: this.targetItems.filter(item => item.isCompleted()).length,
-      denominator: this.targetItems.length,
-    };
+  updateRate(): void {
+    this.numerator = this.targetItems.filter(item => item.isCompleted()).length;
+    this.denominator = this.targetItems.length;
   }
 
   saveTarget(text: string): void {
@@ -43,6 +51,12 @@ struct Target {
       this.targetItems.push(newItem);
       this.setUpdateTime(newItem.getUpdateTimestamp());
     }
+  }
+
+  handleTargetChange(): void {
+    const item = this.targetItems[this.focusIndex];
+    this.updateRate();
+    this.setUpdateTime(item.getUpdateTimestamp());
   }
 
   @Builder
@@ -89,10 +103,13 @@ struct Target {
             .fontSize(18)
         }
         .alignItems(HorizontalAlign.Start)
-        Rate(this.getRate())
+        Rate({ numerator: this.numerator, denominator: this.denominator })
       }
     }
-    .panelStyle()
+    .width('100%')
+    .borderRadius(8)
+    .padding(8)
+    .backgroundColor('#fff')
   }
 
   @Builder
@@ -107,23 +124,14 @@ struct Target {
         bottom: 18
       })
     List({ space: 8 }) {
-      ForEach(this.targetItems, (item: TargetItem) => {
+      ForEach(this.targetItems, (item: TargetItem, index: number) => {
         ListItem() {
-          Column() {
-            Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text(item.getText())
-                .fontColor('#333')
-                .fontSize(20)
-              Column() {
-                Text(item.getRate())
-                  .fontWeight(FontWeight.Bold)
-                Text(item.getFormatterDate())
-                  .fontColor('#999')
-              }
-              .alignItems(HorizontalAlign.End)
-            }
-          }
-          .panelStyle()
+          TargetItemComponent({
+            item,
+            index,
+            focusIndex: $focusIndex,
+            targetChange: $targetChange
+          })
         }
       })
     }
@@ -157,14 +165,6 @@ struct Target {
     .height('100%')
     .padding(12)
   }
-}
-
-@Extend(Column)
-function panelStyle() {
-  .width('100%')
-  .borderRadius(8)
-  .padding(8)
-  .backgroundColor('#fff')
 }
 
 @Extend(Button)
