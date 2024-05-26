@@ -16,11 +16,19 @@ struct Target {
   @State targetItems: TargetItem[] = [
     new TargetItem('子目标1'),
     new TargetItem('子目标2'),
+    new TargetItem('子目标3'),
   ]
   @State updateTime: number = Date.now();
 
   getUpdateTime(): string {
     return getFormattedDateByTimestamp(this.updateTime);
+  }
+
+  getRate(): { numerator: number, denominator: number } {
+    return {
+      numerator: this.targetItems.filter(item => item.isCompleted()).length,
+      denominator: this.targetItems.length,
+    };
   }
 
   @Builder
@@ -102,7 +110,7 @@ struct Target {
               .fontSize(18)
           }
             .alignItems(HorizontalAlign.Start)
-          Rate({ numerator: 15, denominator: 20 })
+          Rate(this.getRate())
         }
       }
         .panelStyle()

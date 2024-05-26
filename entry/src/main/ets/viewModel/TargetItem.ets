@@ -47,4 +47,8 @@ export class TargetItem {
     }
     this.setUpdateDate();
   }
+
+  public isCompleted(): boolean {
+    return this.rate === 1;
+  }
 }
