@@ -1,6 +1,6 @@
 import Dialog from '../view/Dialog'
 import Rate from '../view/Rate'
-import TargetItemComponent from '../view/TargetItem'
+import TargetItemComponent from '../view/TargetItemComponent'
 import { getFormattedDateByTimestamp } from '../viewModel/common'
 import { TargetItem } from '../viewModel/TargetItem'
 
@@ -50,6 +50,7 @@ struct Target {
       const newItem = new TargetItem(text);
       this.targetItems.push(newItem);
       this.setUpdateTime(newItem.getUpdateTimestamp());
+      this.focusIndex = -1;
     }
   }
 
@@ -128,7 +129,7 @@ struct Target {
         ListItem() {
           TargetItemComponent({
             item,
-            index,
+            index: index + 0,
             focusIndex: $focusIndex,
             targetChange: $targetChange
           })
