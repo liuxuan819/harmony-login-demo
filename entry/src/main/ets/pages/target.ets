@@ -18,6 +18,8 @@ struct Target {
   @State @Watch('handleTargetChange') targetChange: boolean = false;
   @State numerator: number = 0;
   @State denominator: number = 0;
+  @State @Watch('onCheck') checkStatus: boolean[] = [];
+  @State selectAll: boolean = false;
 
   onPageShow(): void {
     this.updateRate();
@@ -31,6 +33,20 @@ struct Target {
     customStyle: true,
     autoCancel: false,
   });
+
+  toggleSelectAll(value: boolean): void {
+    this.selectAll = value;
+    this.checkStatus = this.targetItems.map(() => value);
+  }
+
+  onCheck(): void {
+    if (this.checkStatus.every(value => value === true)) {
+      this.selectAll = true;
+    }
+    if (this.checkStatus.some(value => value === false)) {
+      this.selectAll = false;
+    }
+  }
 
   getUpdateTime(): string {
     return getFormattedDateByTimestamp(this.updateTime);
@@ -115,23 +131,50 @@ struct Target {
 
   @Builder
   renderTargetItems() {
-    Text('子目标')
+    Row() {
+      Text('子目标')
+        .fontSize(24)
+        .fontColor('#333')
+        .fontWeight(FontWeight.Bold)
+        .padding({
+          top: 18,
+          bottom: 18
+        })
+      Blank()
+      if (this.targetItems.length > 0) {
+        if (this.isEditMode) {
+          Text('取消')
+            .textStyle()
+            .margin({ left: 16 })
+            .onClick(() => {
+              this.isEditMode = false;
+              this.toggleSelectAll(false);
+            })
+          Text(this.selectAll ? '取消全选' : '全选')
+            .textStyle()
+            .margin({ left: 16 })
+            .onClick(() => this.toggleSelectAll(!this.selectAll))
+        } else {
+          Text('编辑')
+            .textStyle()
+            .onClick(() => {
+              this.isEditMode = true;
+              this.toggleSelectAll(false);
+            })
+        }
+      }
+    }
       .width('100%')
-      .fontSize(24)
-      .fontColor('#333')
-      .fontWeight(FontWeight.Bold)
-      .padding({
-        top: 18,
-        bottom: 18
-      })
     List({ space: 8 }) {
       ForEach(this.targetItems, (item: TargetItem, index: number) => {
         ListItem() {
           TargetItemComponent({
             item,
             index: index + 0,
+            isEditMode: this.isEditMode,
             focusIndex: $focusIndex,
-            targetChange: $targetChange
+            targetChange: $targetChange,
+            checkStatus: $checkStatus,
           })
         }
       })
@@ -175,4 +218,11 @@ function buttonStyle() {
   .fontSize(16)
   .fontWeight(FontWeight.Medium)
   .backgroundColor('#0D182431')
+}
+
+@Extend(Text) function textStyle() {
+  .fontSize(16)
+  .fontColor('#00adef')
+  .lineHeight(19)
+  .fontWeight(FontWeight.Regular)
 }

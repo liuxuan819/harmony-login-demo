@@ -6,8 +6,10 @@ export default struct TargetItemComponent {
   @ObjectLink item: TargetItem;
   @State isExpand: boolean = false;
   @Prop index: number;
+  @Prop isEditMode: boolean;
   @Link @Watch('focusItemChange') focusIndex: number;
   @Link targetChange: boolean;
+  @Link checkStatus: boolean[];
 
   focusItemChange(): void {
     if (this.focusIndex !== this.index) {
@@ -41,13 +43,23 @@ export default struct TargetItemComponent {
         Text(this.item.getText())
           .fontColor('#333')
           .fontSize(20)
-        Column() {
-          Text(this.item.getRate())
-            .fontWeight(FontWeight.Bold)
-          Text(this.item.getFormatterDate())
-            .fontColor('#999')
+        Row() {
+          Column() {
+            Text(this.item.getRate())
+              .fontWeight(FontWeight.Bold)
+            Text(this.item.getFormatterDate())
+              .fontColor('#999')
+          }
+          .alignItems(HorizontalAlign.End)
+          if (this.isEditMode) {
+            Checkbox()
+              .select(this.checkStatus[this.index])
+              .selectedColor('#00adef')
+              .width(20)
+              .margin({ left: 16 })
+              .onChange((isCheck: boolean) => this.checkStatus[this.index] = isCheck)
+          }
         }
-        .alignItems(HorizontalAlign.End)
       }
       this.renderExpandContent()
     }
