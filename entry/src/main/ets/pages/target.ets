@@ -16,14 +16,15 @@ struct Target {
     new TargetItem('子目标1'),
     new TargetItem('子目标2'),
   ]
-  @State updateTime: Date = new Date();
+  @State updateTime: number = Date.now();
 
   getUpdateTime(): string {
-    const month = String(this.updateTime.getMonth() + 1).padStart(2, '0');
-    const day = String(this.updateTime.getDate()).padStart(2, '0');
-    const year = this.updateTime.getFullYear();
-    const hours = String(this.updateTime.getHours()).padStart(2, '0');
-    const minutes = String(this.updateTime.getMinutes()).padStart(2, '0');
+    const updateTimeDate = new Date(this.updateTime);
+    const month = String(updateTimeDate.getMonth() + 1).padStart(2, '0');
+    const day = String(updateTimeDate.getDate()).padStart(2, '0');
+    const year = updateTimeDate.getFullYear();
+    const hours = String(updateTimeDate.getHours()).padStart(2, '0');
+    const minutes = String(updateTimeDate.getMinutes()).padStart(2, '0');
 
     return `${month}/${day}/${year} ${hours}:${minutes}`;
   }
