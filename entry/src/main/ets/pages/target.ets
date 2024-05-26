@@ -1,4 +1,5 @@
 import Rate from '../view/Rate'
+import { getFormattedDateByTimestamp } from '../viewModel/common'
 import { TargetItem } from '../viewModel/TargetItem'
 
 @Extend(Column)
@@ -19,14 +20,7 @@ struct Target {
   @State updateTime: number = Date.now();
 
   getUpdateTime(): string {
-    const updateTimeDate = new Date(this.updateTime);
-    const month = String(updateTimeDate.getMonth() + 1).padStart(2, '0');
-    const day = String(updateTimeDate.getDate()).padStart(2, '0');
-    const year = updateTimeDate.getFullYear();
-    const hours = String(updateTimeDate.getHours()).padStart(2, '0');
-    const minutes = String(updateTimeDate.getMinutes()).padStart(2, '0');
-
-    return `${month}/${day}/${year} ${hours}:${minutes}`;
+    return getFormattedDateByTimestamp(this.updateTime);
   }
 
   @Builder
