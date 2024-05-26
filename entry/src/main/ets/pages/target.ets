@@ -65,6 +65,7 @@ struct Target {
     if (text) {
       const newItem = new TargetItem(text);
       this.targetItems.push(newItem);
+      this.updateRate();
       this.setUpdateTime(newItem.getUpdateTimestamp());
       this.focusIndex = -1;
     }
@@ -74,6 +75,15 @@ struct Target {
     const item = this.targetItems[this.focusIndex];
     this.updateRate();
     this.setUpdateTime(item.getUpdateTimestamp());
+  }
+
+  deleteTarget(): void {
+    this.targetItems = this.targetItems.filter((item, index) => this.checkStatus[index]);
+    this.toggleSelectAll(false);
+    this.updateRate();
+    this.setUpdateTime();
+    this.isEditMode = false;
+    this.focusIndex = -1;
   }
 
   @Builder
@@ -189,6 +199,7 @@ struct Target {
       Button('删除')
         .buttonStyle()
         .fontColor(Color.Red)
+        .onClick(() => this.deleteTarget())
     } else {
       Button('添加子目标')
         .buttonStyle()
