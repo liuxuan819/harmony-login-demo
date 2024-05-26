@@ -39,7 +39,7 @@ struct Target {
         ListItem() {
           Column() {
             Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-              Text(item.text)
+              Text(item.getText())
                 .fontColor('#333')
                 .fontSize(20)
               Column() {
