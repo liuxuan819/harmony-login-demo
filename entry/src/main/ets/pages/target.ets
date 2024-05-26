@@ -38,9 +38,11 @@ struct Target {
   }
 
   saveTarget(text: string): void {
-    const newItem = new TargetItem(text);
-    this.targetItems.push(newItem);
-    this.setUpdateTime(newItem.getUpdateTimestamp());
+    if (text) {
+      const newItem = new TargetItem(text);
+      this.targetItems.push(newItem);
+      this.setUpdateTime(newItem.getUpdateTimestamp());
+    }
   }
 
   @Builder
