@@ -1,4 +1,5 @@
 import { getFormattedDateByTimestamp } from './common';
+
 export class TargetItem {
   private text: string;
   private updateTime: number;
@@ -24,6 +25,10 @@ export class TargetItem {
 
   public getFormatterDate(): string {
     return getFormattedDateByTimestamp(this.updateTime)
+  }
+
+  public getUpdateTimestamp(): number {
+    return this.updateTime;
   }
 
   private  setUpdateDate(): void {
